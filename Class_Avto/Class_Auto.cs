@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Class_Avto
 {
@@ -28,20 +23,18 @@ namespace Class_Avto
             Console.WriteLine("Расход: " + rasxod);
         }
 
-
         public void Zapravka(double top)
         {
             if (top > 0)
             {
                 this.topliva += top;
-                Console.WriteLine("Топливо успешно заправлено. Текущий бак: " + (this.topliva += top) + " л");
+                Console.WriteLine($"Топливо успешно заправлено. Текущий бак: {this.topliva:f2}  л");
             }
             else
             {
-                Console.WriteLine("Ошибка! Нельзя заправить отрицательное количество топлива.");
+                Console.WriteLine("Ошибка! Нельзя заправить отрицательное количество топлива или ничего не ввести.");
             }
         }
-
 
         public void Proidenei_put(double rasstoyanie)
         {
@@ -55,50 +48,54 @@ namespace Class_Avto
 
         private void Move(int km)
         {
-            double temp_Flow = this.rasxod;
+            Console.Clear();
             double rasstoyanie = km;
-
-           double Ostavshie_topliva = this.topliva - (rasstoyanie * (this.rasxod) / 100);
+            double Ostavshie_topliva = this.topliva - (rasstoyanie * this.rasxod / 100);
 
             if (Ostavshie_topliva >= 0)
             {
                 Console.WriteLine("Вы доехали!");
                 this.Tekushee_rasstoyanie += rasstoyanie;
-
-                // Обновляем оставшееся топливо
                 this.topliva = Ostavshie_topliva;
             }
             else
             {
-                Console.WriteLine("Если не хотите дальше пешком, введите, сколько литров вы хотите заправить: ");
-                Zapravka(double.Parse(Console.ReadLine()));
-                Ostavshie_topliva = this.topliva - (rasstoyanie * (this.rasxod) / 100);
-
-                if (Ostavshie_topliva >= 0)
+                Console.Clear();
+                Console.WriteLine("Если вы хотите продолжить путишествие, введите, сколько литров вы хотите заправить: ");
+                double additionalFuel = 0;
+                if (double.TryParse(Console.ReadLine(), out additionalFuel))
                 {
-                    Console.WriteLine("Вы смогли доехать до места назначения и в баке осталось: " + Ostavshie_topliva);
+                    if (additionalFuel >= 0)
+                    {
+                        Zapravka(additionalFuel);
+                        Ostavshie_topliva = this.topliva - (rasstoyanie * this.rasxod / 100);
+
+                        if (Ostavshie_topliva >= 0)
+                        {
+                            Console.WriteLine($"Вы смогли доехать до места назначения и в баке осталось: { Ostavshie_topliva}");
+                            this.topliva = Ostavshie_topliva;
+                        }
+                        else
+                        {
+                            double trebuyemaya_topliva = Math.Abs(Ostavshie_topliva);
+                            Console.WriteLine($"Вам не хватило топлива до места назначения. Вам нужно было заправить ещё {trebuyemaya_topliva:f2} литров");
+                            this.Tekushee_rasstoyanie -= rasstoyanie;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка! Нельзя заправить отрицательное количество топлива.");
+                    }
                 }
                 else
                 {
-                    double trebuyemaya_topliva = Math.Abs(Ostavshie_topliva);
-                    Console.WriteLine("Вам не хватило топлива до места назначения. Вам нужно было заправить ещё  " + trebuyemaya_topliva + " литров");
-                    this.Tekushee_rasstoyanie -= rasstoyanie;
+                    Console.WriteLine("Ошибка! Некорректный ввод.");
                 }
             }
-            // Обновляем оставшееся топливо
-            double update = this.topliva - (rasstoyanie * (this.rasxod) / 100);
-            Console.WriteLine("Текущий топлива: " + update);
-
-            this.Tekushee_rasstoyanie += rasstoyanie;
-            if (update <= 0)
-            {
-                Console.WriteLine("Путишествие закончено.Всего Хорошего");
-                Environment.Exit(0);
-                Console.ReadKey();
-            }
-            
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine($"Текущий топлива: {this.topliva:f2}");
+            Console.ForegroundColor = ConsoleColor.White;
         }
-
 
         public void MOVE(int km)
         {
